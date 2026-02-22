@@ -13,7 +13,7 @@
 - Member 2: Bia Mary Boban - TocH institute of science and technology
 
 ### Hosted Project Link
-[mention your project hosted link here]
+https://auto-x-tinkherhack-kvtf.vercel.app/
 
 ### Project Description
 SaveSmart AI is a web-based digital expense tracking system that analyzes bank statements to automatically categorize spending and visualize financial patterns.
