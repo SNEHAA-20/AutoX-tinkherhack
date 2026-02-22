@@ -2,28 +2,30 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# SaveSmart Ai🎯
 
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: AutoX
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
+- Member 1: Sneha Ann John - TocH institute of science and technology
+- Member 2: Bia Mary Boban - TocH institute of science and technology
 
 ### Hosted Project Link
 [mention your project hosted link here]
 
 ### Project Description
-[2-3 lines about what your project does]
+SaveSmart AI is a web-based digital expense tracking system that analyzes bank statements to automatically categorize spending and visualize financial patterns.
+It provides intelligent insights, spending trends, and overspending alerts to help users make smarter financial decisions.
 
 ### The Problem statement
-[What problem are you solving?]
+Many people struggle to understand where their money is going because bank statements are complex and unorganized. This leads to overspending, poor savings habits, and lack of financial awareness.
+SaveSmart AI solves this problem by automatically analyzing transactions, categorizing expenses, and presenting clear visual insights to help users make smarter financial decisions.
 
 ### The Solution
-[How are you solving it?]
 
+We solve this problem by automatically processing bank transaction data, categorizing expenses using intelligent rules, and displaying spending insights through a simple and interactive dashboard. This helps users clearly understand their financial habits and manage money more effectively.
 ---
 
 ## Technical Details
@@ -31,10 +33,10 @@
 ### Technologies/Components Used
 
 **For Software:**
-- Languages used: [e.g., JavaScript, Python, Java]
-- Frameworks used: [e.g., React, Django, Spring Boot]
-- Libraries used: [e.g., axios, pandas, JUnit]
-- Tools used: [e.g., VS Code, Git, Docker]
+- Languages used: JavaScript, Python , HTML,CSS
+- Frameworks used: Flask
+- Libraries used:pandas, scikit-learn
+- Tools used: VS code, git , chatgpt
 
 **For Hardware:**
 - Main components: [List main components]
@@ -46,10 +48,10 @@
 ## Features
 
 List the key features of your project:
-- Feature 1: [Description]
-- Feature 2: [Description]
-- Feature 3: [Description]
-- Feature 4: [Description]
+- Feature 1: Bank statement  upload : Users can upload their transaction data in csv format for automatic processing
+- Feature 2: Financial Dashboard : This clean and interactive dashboard displays total income, total expenses, savings, average spending
+- Feature 3: Category wise spending analysis : Shows how much money is spent in each category with visual progress indicators.
+- Feature 4: Spending Insights : It provides highest spending category, percentage of income spend.
 
 ---
 
@@ -59,12 +61,12 @@ List the key features of your project:
 
 #### Installation
 ```bash
-[Installation commands - e.g., npm install, pip install -r requirements.txt]
+Installation commands - python --version, pip install -r requirements.txt
 ```
 
 #### Run
 ```bash
-[Run commands - e.g., npm start, python app.py]
+Run commands -  python app.py
 ```
 
 ### For Hardware:
@@ -83,14 +85,14 @@ List the key features of your project:
 
 #### Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot1]![alt text](<./Screenshot 2026-02-22 102751.png>)
+The screenshot shows the login or register interface
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot2]![alt text](<./Screenshot 2026-02-22 102816.png>)
+This screenshot shows the total income , expenditure, balance and average 
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot3]![alt text](<./Screenshot 2026-02-22 102857.png>)
+This screenshot shows the money saving tips 
 
 #### Diagrams
 

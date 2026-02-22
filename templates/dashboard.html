@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SaveSmart{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>💼 Financial Dashboard</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card income">
+            <div class="stat-icon">💵</div>
+            <div class="stat-content">
+                <h3>Total Income</h3>
+                <p class="stat-value">₹{{ "%.2f"|format(income) }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card expense">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+                <h3>Total Expenses</h3>
+                <p class="stat-value">₹{{ "%.2f"|format(total) }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card savings">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-content">
+                <h3>Current Savings</h3>
+                <p class="stat-value">₹{{ "%.2f"|format(savings) }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card average">
+            <div class="stat-icon">📈</div>
+            <div class="stat-content">
+                <h3>Avg Spending</h3>
+                <p class="stat-value">₹{{ "%.2f"|format(avg_spending) }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if category_breakdown %}
+    <div class="category-section">
+        <h2>📋 Spending by Category</h2>
+        <div class="category-grid">
+            {% for category, amount in category_breakdown.items()|sort %}
+            <div class="category-item">
+                <div class="category-name">{{ category }}</div>
+                <div class="category-amount">₹{{ "%.2f"|format(amount) }}</div>
+                <div class="category-progress">
+                    <div class="progress-bar" style="width: {% if total > 0 %}{{ (amount / total * 100)|int }}{% else %}0{% endif %}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="upload-section">
+        <h2>📁 Upload Bank Transactions</h2>
+        <p class="upload-info">Upload a CSV file with columns: Description, Amount</p>
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit" class="btn btn-primary">📤 Upload CSV</button>
+        </form>
+    </div>
+
+    <div class="expenditure-summary">
+        <h2>💰 Expenditure Summary</h2>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Total Spent</div>
+                <div class="summary-value">₹{{ "%.2f"|format(total) }}</div>
+                <div class="summary-percent">{{ ((total / income * 100) if income > 0 else 0)|int }}% of income</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Transactions</div>
+                <div class="summary-value">{{ expenses|length }}</div>
+                <div class="summary-percent">Total records</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Highest Category</div>
+                <div class="summary-value">{{ max_category[0] }}</div>
+                <div class="summary-percent">₹{{ "%.0f"|format(max_category[1]) }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Monthly Avg</div>
+                <div class="summary-value">₹{{ "%.0f"|format(avg_spending) }}</div>
+                <div class="summary-percent">Per transaction</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="transactions-section">
+        <h2>💳 Recent Activities</h2>
+        {% if expenses %}
+        <div class="transactions-table">
+            <div class="table-header">
+                <p style="color: #666; font-size: 14px;">Last 15 transactions</p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses[:15] %}
+                    <tr class="transaction-row">
+                        <td class="date-cell">{{ expense.date.strftime('%d-%m-%Y') }}</td>
+                        <td class="description-cell">
+                            <div class="expense-icon">
+                                {% if expense.category == 'Food' %}🍔
+                                {% elif expense.category == 'Shopping' %}🛍️
+                                {% elif expense.category == 'Travel' %}🚕
+                                {% elif expense.category == 'Bills' %}📄
+                                {% elif expense.category == 'Entertainment' %}🎬
+                                {% elif expense.category == 'Health' %}🏥
+                                {% elif expense.category == 'Education' %}📚
+                                {% else %}💸
+                                {% endif %}
+                            </div>
+                            <span>{{ expense.description }}</span>
+                        </td>
+                        <td><span class="badge badge-{{ expense.category|lower }}">{{ expense.category }}</span></td>
+                        <td class="amount">₹{{ "%.2f"|format(expense.amount) }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_expense', expense_id=expense.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Delete this expense?')">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No expenses yet. Upload a CSV file to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.transaction-row:hover {
+    background-color: #f5f5f5;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-food { background-color: #ffebee; color: #c62828; }
+.badge-shopping { background-color: #f3e5f5; color: #6a1b9a; }
+.badge-travel { background-color: #e0f2f1; color: #00695c; }
+.badge-bills { background-color: #fff3e0; color: #e65100; }
+.badge-entertainment { background-color: #e3f2fd; color: #0d47a1; }
+.badge-health { background-color: #f1f8e9; color: #33691e; }
+.badge-education { background-color: #ede7f6; color: #512da8; }
+.badge-other { background-color: #eceff1; color: #455a64; }
+</style>
+{% endblock %}

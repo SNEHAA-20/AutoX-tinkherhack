@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - SaveSmart{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h1>👤 Your Profile</h1>
+
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">💰</div>
+            <h2>{{ user.username }}</h2>
+            <p style="color: #999; margin-top: 5px;">Member since {{ user.created_at.strftime('%B %d, %Y') }}</p>
+        </div>
+
+        <form method="POST" class="profile-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    value="{{ user.username }}" 
+                    disabled
+                    style="background: #e0e0e0; cursor: not-allowed;"
+                >
+                <small style="color: #999;">Username cannot be changed</small>
+            </div>
+
+            <div class="form-group">
+                <label for="income">Monthly Income (₹)</label>
+                <input 
+                    type="number" 
+                    id="income" 
+                    name="income" 
+                    placeholder="Enter your monthly income" 
+                    value="{{ user.income }}"
+                    step="100"
+                    min="0"
+                    required
+                >
+                <small style="color: #667eea; font-weight: bold;">Current: ₹{{ "%.2f"|format(user.income) }}</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                ✓ Save Changes
+            </button>
+        </form>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+
+        <div class="profile-info">
+            <h3>📊 Account Statistics</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Monthly Income</span>
+                    <span class="info-value">₹{{ "%.2f"|format(user.income) }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Account Type</span>
+                    <span class="info-value">Premium</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Total Transactions</span>
+                    <span class="info-value">{% if expenses %}{{ expenses|length }}{% else %}0{% endif %}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Last Updated</span>
+                    <span class="info-value">Today</span>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+
+        <div class="profile-actions">
+            <h3>⚙️ Actions</h3>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="display: inline-block; margin-top: 10px;">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-form {
+    margin: 20px 0;
+}
+
+.profile-form .form-group {
+    margin-bottom: 20px;
+}
+
+.profile-info {
+    margin: 20px 0;
+}
+
+.profile-info h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.info-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.info-label {
+    display: block;
+    font-size: 12px;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.info-value {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.profile-actions {
+    margin-top: 20px;
+}
+
+.profile-actions h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+@media (max-width: 600px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .profile-card {
+        padding: 20px;
+    }
+}
+</style>
+{% endblock %}

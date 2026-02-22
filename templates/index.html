@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Save Smart AI - Intelligent Finance Analyzer</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.fade-in { animation: fadeIn 1.5s ease-in-out; }
+@keyframes fadeIn {
+from { opacity:0; transform:translateY(20px);}
+to { opacity:1; transform:translateY(0);}
+}
+.glow {
+animation: glow 2s ease-in-out infinite alternate;
+}
+@keyframes glow {
+from { text-shadow:0 0 10px #fff, 0 0 20px #6366F1;}
+to { text-shadow:0 0 20px #fff, 0 0 40px #9333ea;}
+}
+</style>
+</head>
+
+<body class="bg-gray-100 text-gray-900 min-h-screen transition-all duration-500" id="body">
+
+<!-- WELCOME -->
+<div id="welcomeScreen" class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white z-50">
+<div class="text-center fade-in">
+<h1 class="text-5xl font-bold glow mb-4">Welcome to Save Smart AI</h1>
+<p class="opacity-80 mb-8">Your Intelligent Financial Assistant</p>
+<button onclick="startApp()" class="bg-indigo-500 px-6 py-3 rounded-xl hover:scale-110 transition">
+Get Started →
+</button>
+</div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingScreen" class="hidden flex items-center justify-center h-screen bg-gradient-to-br from-indigo-600 to-blue-500">
+<div class="text-center">
+<div class="w-20 h-20 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+<h1 class="text-white text-2xl mt-6 font-semibold animate-pulse">
+Analyzing your finances...
+</h1>
+</div>
+</div>
+
+<!-- MAIN -->
+<div id="mainContent" class="hidden p-6 max-w-6xl mx-auto">
+
+<div class="flex justify-between items-center mb-8">
+<h1 class="text-3xl font-bold">💰 Save Smart AI Dashboard</h1>
+<button onclick="toggleDarkMode()" class="p-2 rounded-full bg-indigo-500 text-white">🌙</button>
+</div>
+
+<!-- Income -->
+<div class="bg-white p-6 rounded-2xl shadow-lg mb-6 dark-card">
+<h2 class="text-xl font-semibold mb-3">Monthly Income</h2>
+<input type="number" id="income" placeholder="Enter Monthly Income"
+class="border p-2 rounded w-full mb-3">
+<button onclick="updateDashboard()" class="bg-green-500 text-white px-4 py-2 rounded">
+Analyze Finances
+</button>
+</div>
+
+<!-- Financial Summary -->
+<div class="bg-gray-50 p-6 rounded-2xl shadow-lg mb-6">
+<h2 class="text-xl font-semibold mb-3">📊 Financial Summary</h2>
+<p>Bank Balance: ₹<span id="balance">0</span></p>
+<p>This Month Expenses: ₹<span id="currentMonth">0</span></p>
+<p>Last Month Expenses: ₹<span id="lastMonth">0</span></p>
+<p>Savings Rate: <span id="savingsRate">0</span>%</p>
+<p>Financial Health Score: <span id="healthScore">0</span>/100</p>
+</div>
+
+<!-- Smart Advice -->
+<div class="bg-yellow-100 p-6 rounded-2xl shadow-lg mb-6">
+<h2 class="text-xl font-semibold mb-3">💡 Smart Savings Plan</h2>
+<p id="advice">Enter income to generate financial insights.</p>
+</div>
+
+<!-- Charts -->
+<div class="grid md:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-2xl shadow-lg dark-card">
+<h2 class="text-xl font-semibold mb-4">Spending Categories</h2>
+<canvas id="pieChart"></canvas>
+</div>
+
+<div class="bg-white p-6 rounded-2xl shadow-lg dark-card">
+<h2 class="text-xl font-semibold mb-4">Monthly Expense Trend</h2>
+<canvas id="lineChart"></canvas>
+</div>
+</div>
+
+</div>
+
+<script>
+
+/* -----------------------------
+   AUTO TRANSACTION HISTORY
+------------------------------ */
+
+let transactions = [
+{amount:12000, category:"Rent", month:new Date().getMonth()},
+{amount:3500, category:"Food", month:new Date().getMonth()},
+{amount:2000, category:"Transport", month:new Date().getMonth()},
+{amount:1500, category:"Shopping", month:new Date().getMonth()},
+{amount:10000, category:"Rent", month:new Date().getMonth()-1},
+{amount:4000, category:"Food", month:new Date().getMonth()-1},
+{amount:1800, category:"Transport", month:new Date().getMonth()-1}
+];
+
+let pieChart, lineChart;
+
+/* -----------------------------
+   CORE FUNCTIONS
+------------------------------ */
+
+function startApp() {
+document.getElementById("welcomeScreen").style.display="none";
+document.getElementById("loadingScreen").classList.remove("hidden");
+setTimeout(()=>{
+document.getElementById("loadingScreen").style.display="none";
+document.getElementById("mainContent").classList.remove("hidden");
+},2000);
+}
+
+function toggleDarkMode(){
+const body=document.getElementById("body");
+body.classList.toggle("bg-gray-900");
+body.classList.toggle("text-white");
+body.classList.toggle("bg-gray-100");
+body.classList.toggle("text-gray-900");
+document.querySelectorAll(".dark-card").forEach(card=>{
+card.classList.toggle("bg-gray-800");
+card.classList.toggle("bg-white");
+});
+}
+
+function updateDashboard(){
+
+let income = Number(document.getElementById("income").value) || 0;
+let currentMonth = new Date().getMonth();
+let lastMonth = currentMonth - 1;
+
+let currentTotal = 0, lastTotal = 0;
+let categoryData = {}, monthTotals = {};
+
+transactions.forEach(t => {
+
+monthTotals[t.month] = (monthTotals[t.month] || 0) + t.amount;
+
+if(t.month === currentMonth){
+currentTotal += t.amount;
+categoryData[t.category] = (categoryData[t.category] || 0) + t.amount;
+}
+
+if(t.month === lastMonth){
+lastTotal += t.amount;
+}
+
+});
+
+let balance = income - currentTotal;
+let savingsRate = income > 0 ? (((income-currentTotal)/income)*100).toFixed(1) : 0;
+
+document.getElementById("balance").innerText = balance;
+document.getElementById("currentMonth").innerText = currentTotal;
+document.getElementById("lastMonth").innerText = lastTotal;
+document.getElementById("savingsRate").innerText = savingsRate;
+
+/* Financial Health Score */
+let healthScore = 0;
+if(savingsRate >= 30) healthScore = 90;
+else if(savingsRate >= 20) healthScore = 75;
+else if(savingsRate >= 10) healthScore = 50;
+else healthScore = 30;
+
+document.getElementById("healthScore").innerText = healthScore;
+
+generateAdvice(currentTotal, lastTotal, income, savingsRate);
+updateCharts(categoryData, monthTotals);
+}
+
+function generateAdvice(current, previous, income, savingsRate){
+
+let msg = "";
+
+if(previous > 0){
+if(current > previous){
+msg += "⚠️ Spending increased vs last month.\nReduce non-essential expenses by 15%.\n\n";
+}else{
+msg += "✅ Good job! Spending reduced compared to last month.\n\n";
+}
+}
+
+if(income > 0){
+let recommended = (income * 0.20).toFixed(0);
+let emergency = current * 6;
+let possible = income - current;
+
+msg += "💰 Recommended Savings (20% rule): ₹" + recommended + "\n";
+msg += "📈 Possible Monthly Savings: ₹" + possible + "\n";
+msg += "🎯 Emergency Fund Target: ₹" + emergency + "\n\n";
+
+if(savingsRate < 20){
+msg += "⚠️ Your savings rate is below healthy level. Increase savings.";
+}else{
+msg += "🏆 You are maintaining a healthy savings rate!";
+}
+}
+
+document.getElementById("advice").innerText = msg;
+}
+
+function updateCharts(categoryData, monthTotals){
+
+if(pieChart) pieChart.destroy();
+pieChart = new Chart(document.getElementById("pieChart"),{
+type:"pie",
+data:{
+labels:Object.keys(categoryData),
+datasets:[{
+data:Object.values(categoryData),
+backgroundColor:["#6366F1","#22D3EE","#F59E0B","#EF4444","#10B981"]
+}]
+}
+});
+
+if(lineChart) lineChart.destroy();
+lineChart = new Chart(document.getElementById("lineChart"),{
+type:"line",
+data:{
+labels:["Last Month","Current Month"],
+datasets:[{
+label:"Expense",
+data:[monthTotals[new Date().getMonth()-1] || 0,
+monthTotals[new Date().getMonth()] || 0],
+borderColor:"#6366F1",
+borderWidth:3,
+fill:false
+}]
+}
+});
+}
+
+</script>
+</body>
+</html>
